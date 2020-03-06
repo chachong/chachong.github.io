@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1" />
+    <title>{{systemCustomService.webInfo.webTit||'论文检测系统'}}</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+
+<link rel="stylesheet" type="text/css" href="css/reset.css" />
+<link rel="stylesheet" type="text/css" href="css/check.css" />
+<link rel="stylesheet" type="text/css" href="css/check-theme.css" />
+
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.9.1/jquery.min.js"></script>
+<script src="js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery.placeholder.min.js" type="text/javascript" charset="utf-8"></script>
+
+
+<script type="text/javascript" src="http://api.checkpass.net/v1/check.min.js"></script> 
+<script src="js/mycontrol.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/config.js" type="text/javascript" charset="utf-8"></script>
+<!--[if lt IE 9]>
+    <script type="text/javascript" src="../com/js/respond.min.js"></script>
+<![endif]-->
+</head>
+<body>
+    <div ng-if="!configService.isInit">
+        <div class="init-wrap">
+            正在进入，请稍后...
+        </div>
+    </div>
+    <div ng-if="configService.isInit" class="container-fluid vp-body">
+                <!--顶部导航栏-->
+        <div class="clearfix bg-white vp-navtop">
+            <div class="div-img logo-img">
+                <a href="#">
+                    <img src="images/logo.png" title="{{systemCustomService.webInfo.webTit||'论文检测系统'}}" />
+                </a>
+                <em></em>
+            </div>
+            <div class="search-wrap">
+                <div class="clearfix row">
+                    <div class="pull-left">
+                        <p style="color: red;padding-top: 1rem;"><b>郑重承诺：</b><span>所有系统检测报告，均支持官方验真，假一赔十！</span></p>
+                        <p style="color: red;"><b>郑重承诺：</b><span>所有论文直达各系统官方查重接口，绝无被盗可能！盗窃论文，牢底坐穿！</span></p>
+                    </div>
+                    <form class="pull-right" action="report.html" id="searchForm" name="searchForm">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="tid" id="fastQueryKey" placeholder="请输入您的订单编号,查看报告" />
+                            <span class="input-group-addon" title="查询"><a href="javascript:{document.searchForm.submit()}"><img src="images/icon-query.png" /></a></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="icons-des">
+                <div class="clearfix row">
+                    <div class="col-xs-3">
+                        <img src="images/icon-accuracy.png" />
+                        <span>权威精准</span>
+                    </div>
+                    <div class="col-xs-3">
+                        <img src="images/icon-price.png" />
+                        <span>价格优惠</span>
+                    </div>
+                    <div class="col-xs-3">
+                        <img src="images/icon-safe.png" />
+                        <span>安全可靠</span>
+                    </div>
+                    <div class="col-xs-3">
+                        <img src="images/icon-service.png" />
+                        <span>售后保障</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--vp-navtop end-->
+        <div class="clearfix vp-content">
+            <!-- 左栏导航区域 -->
+<div class="block-nav">
+    <ul class="nav-list" ng-controller="leftMenuCtl">
+        <li ng-class="{'active': false, 'hot': checkSystemService.getCheckSystems().length<=1}"><a ng-href="index.html">提交检测</a>
+
+        </li>
+        <li ng-class="{'active':true}"><a href="report.html">提取报告</a></li>
+        <li><a title="加入收藏夹" rel="sidebar" href="javascript:joinFavorite();">收藏网站</a></li>
+    </ul>
+</div>
+            <!-- 主体内容 -->
+            <div class="block-main" ng-controller="checkRecordCtl">
+                <div class="report-main">
+                    <div class="bg-white block">
+                        <span class="Btitie">订单编号 </span>
+                        <span class="sub-tit">填写检测的“订单编号”(如果有两个订单则填写其中任意一个即可)，点击查询报告，在“我的检测报告列表”中下载对应的检测报告！</span>
+
+                        <form action="javascript:" method="post" class="form-horizontal form-report">
+                            <div class="form-group">
+                                <label for="search_id" class="control-label">订单编号：</label>
+                                <div class="col-xs-5">
+                                    <input type="text" ng-model="queryInfo.queryTid" class="form-control" name="search_id" id="search_id" value="" placeholder="请输入您的订单编号">
+                                </div>
+                                <button ng-click="queryCheckRecordByTid(queryInfo.queryTid)" class="btn">查询报告</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="bg-white block block-res">
+                        <div class="item-res">
+                            <dl class="row item" ng-repeat="cr in queryInfo.queryRecords" record-repeat-finish>
+                                <dt class="col-xs-10">
+                                    <p class="lwbt ellipsis">{{cr.title}}</p>
+                                    <p class="tjsj">
+                                        <span>论文作者：{{cr.author}}</span>
+                                        <span>提交时间：{{cr.upload_time}}</span>
+                                    </p>
+                                    <div ng-if="cr.status==1||cr.status==0" class="state">
+                                        <img src="images/check-load.png"/>正在检测
+                                    </div>
+                                    <div ng-if="cr.status==2" class="state pass">
+                                        <img src="images/check-pass.png"/>检测成功
+                                    </div>
+                                    <div ng-if="cr.status==3||cr.status==4" class="state fail" data-toggle="tooltip" data-placement="right" title="" data-original-title="{{'失败原因：'+cr.note}}">
+                                        <img src="images/check-fail.png"/>检测失败({{'失败原因：'+cr.note}})
+                                    </div>
+                                    <div ng-if="cr.status==9" class="state fail">
+                                        已删除
+                                    </div>
+                                </dt>
+                                <dd class="col-xs-2">
+                                    <a ng-disabled="cr.status!=2" ng-href="{{cr.report_path}}" target="_blank" class="btn btn-block btn-lg btn-download"><img src="images/icon-download.png"/>下载报告</a>
+                                    <a ng-disabled="cr.status!=2" ng-click="cr.status==2&&deleteCheckRecord(cr.paper_id)" class="btn btn-block btn-lg btn-del"><img src="images/icon-del.png"/>删除报告</a>
+                                </dd>
+                            </dl>
+                            <div ng-if="!queryInfo.isQuerying&&queryInfo.queryRecords.length==0" class="no-res">
+                                <p><img src="images/no-res.png" />没有查询出报告！</p>
+                            </div>
+                            <div ng-if="queryInfo.isQuerying" class="no-res">
+                                <p><img src="images/no-res.png" />正在查询报告....</p>
+                            </div>
+                        </div>
+                        <p class="res-count">共检测到 <i>{{queryInfo.queryRecords.length}}</i>篇报告</p>
+                        <div class="remind">
+                            提醒：系统仅保留 7 天以内的检测报告，用户检测完成后请尽快下载您的检测报告!
+                        </div>
+                    </div>
+                </div>
+                <div class="vp-footer">
+        Copyright © <span class="copy-diff">{{systemCustomService.webInfo.webTit||""}}</span>
+</div>
+            </div>
+                        <!-- 右栏区域 -->
+            <div class="block-info">
+                <div class="bg-white block block-sale">
+                    <span class="Btitie">联系客服</span>
+                    <ul ng-if="siteService.sellerInfo">
+                        <li><b>客服QQ：</b><span><a target="_blank" href="{{'http://wpa.qq.com/msgrd?v=3&uin='+siteService.sellerInfo.qq+'&site=qq&menu=yes'}}">{{systemCustomService.webInfo.qq||"商家未设置"}}</a></span></li>
+                    </ul>
+                </div>
+
+                <div class="bg-white block block-tips">
+                    <span class="Btitie">温馨提示</span>
+                    <div class="dl-wrap">
+                        
+                        <dl class="clearfix" ng-repeat="t in systemCustomService.webInfo.tips1">
+                            <dt>{{t.key}}</dt>
+                            <dd ng-bind-html="t.val"></dd>
+                        </dl>
+                        
+                    </div>
+                </div>
+
+            </div>
+            <!-- block-info end -->
+        </div>
+        <!-- vp-content end -->
+    </div>
+    <script src="js/loading.js"></script>
+<script src="js/util.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    !function () {
+        var timeoutLoad = function () {
+            if (window.angular) {
+                angular.module('checkPaper').run(['$location','configService','checkSystemService','$rootScope', function ($location,configService,checkSystemService,$rootScope) { 
+                    var promise=configService.config({
+                        initUrl: "http://api.checkpass.net",
+                        userToken: "q8DxLfrgemtZ59x372919FPXT6c=",
+                        initJaneName: "cnkivip,cqvip,cqvipmd",
+                        paySuccess:function (param) {
+                            var tid=param.oid;
+                            location.href = "report.html?tid=" + tid;
+                        }
+                    });
+                    promise.then(function(){
+                        var oSearch = $location.search();
+                        var urlSearch = {};
+                        if (location.search.substr(0, 1) == '?') {
+                            urlSearch = $location.search(location.search.substr(1)).search();
+                            $location.search(oSearch);
+                        }
+                        // console.log($location.search().jane_name);
+                        if(!!urlSearch.jane_name){
+                            checkSystemService.current(urlSearch.jane_name);
+                        }
+                    });
+                }]);
+                angular.module('checkPaper').run(['$rootScope', function ($rootScope) { 
+                    $rootScope.$on("checkRecordSuccess",function(event,checkRecord){
+                        //检测成功通知，如：可以播放音乐提示等等
+                        console.log(checkRecord);
+                    });
+                }]);
+                angular.bootstrap(document, ['checkPaper']);
+            } else {
+                setTimeout(timeoutLoad, 50);
+            }
+        };
+        timeoutLoad();
+    }();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1" />
+  <title>{{systemCustomService.webInfo.webTit||'论文检测系统'}}</title>
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+
+<link rel="stylesheet" type="text/css" href="css/reset.css" />
+<link rel="stylesheet" type="text/css" href="css/check.css" />
+<link rel="stylesheet" type="text/css" href="css/check-theme.css" />
+
+
+  <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.9.1/jquery.min.js"></script>
+<script src="js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery.placeholder.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="http://api.checkpass.net/v1/check.min.js"></script>
+<script src="js/mycontrol.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/config.js" type="text/javascript" charset="utf-8"></script>
+<!--[if lt IE 9]>
+    <script type="text/javascript" src="../com/js/respond.min.js"></script>
+<![endif]-->
+</head>
+<body> 
+  <div ng-if="!configService.isInit">
+    <div class="init-wrap">
+      正在进入，请稍后...
+    </div>
+  </div>
+  <div ng-init="step.index=1" ng-if="configService.isInit" ng-cloak class="container-fluid vp-body">
+            <!--顶部导航栏-->
+        <div class="clearfix bg-white vp-navtop">
+            <div class="div-img logo-img">
+                <a href="#">
+                    <img src="images/logo.png" title="{{systemCustomService.webInfo.webTit||'论文检测系统'}}" />
+                </a>
+                <em></em>
+            </div>
+            <div class="search-wrap">
+                <div class="clearfix row">
+                    <div class="pull-left">
+                      <p style="color: red;padding-top: 1rem;"><b>郑重承诺：</b><span>所有系统检测报告，均支持官方验真，假一赔十！</span></p>
+                      <p style="color: red;"><b>郑重承诺：</b><span>所有论文直达各系统官方查重接口，绝无被盗可能！盗窃论文，牢底坐穿！</span></p>
+                    </div>
+                    <form class="pull-right" action="report.html" id="searchForm" name="searchForm">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="tid" id="fastQueryKey" placeholder="请输入您的订单编号,查看报告" />
+                            <span class="input-group-addon" title="查询"><a href="javascript:{document.searchForm.submit()}"><img src="images/icon-query.png" /></a></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="icons-des">
+                <div class="clearfix row">
+                    <div class="col-xs-3">
+                        <img src="images/icon-accuracy.png" />
+                        <span>权威精准</span>
+                    </div>
+                    <div class="col-xs-3">
+                        <img src="images/icon-price.png" />
+                        <span>价格优惠</span>
+                    </div>
+                    <div class="col-xs-3">
+                        <img src="images/icon-safe.png" />
+                        <span>安全可靠</span>
+                    </div>
+                    <div class="col-xs-3">
+                        <img src="images/icon-service.png" />
+                        <span>售后保障</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--vp-navtop end-->
+    <div class="clearfix vp-content">
+      <!-- 左栏导航区域 -->
+<div class="block-nav">
+    <ul class="nav-list" ng-controller="leftMenuCtl">
+        <li ng-class="{'active': true, 'hot': checkSystemService.getCheckSystems().length<=1}"><a ng-href="index.html">提交检测</a>
+
+        </li>
+        <li ng-class="{'active':false}"><a href="report.html">提取报告</a></li>
+        <li><a title="加入收藏夹" rel="sidebar" href="javascript:joinFavorite();">收藏系统</a></li>
+    </ul>
+</div>
+      <!-- 主体内容 -->
+      <div class="block-main">
+        <div ng-if="step.index==1" class="bg-white submit-main">
+          <form action="#" method="post" name="paperForm">
+            <div class="form-group" ng-if="checkSystemService.getCheckSystems().length>1">
+              <label class="Btitie">请选择检测系统</label>
+              <h5 style="color: red; font-weight: bold">知网系列</h5>
+              <div class="radio-wrap">
+                <div class="radio-inline" ng-repeat="c in checkSystemService.getCheckSystems().slice(0,3)">
+                  <input type="radio" name="versions" value="{{$index}}" ng-click="checkSystemService.current(c.janeName);"
+                    ng-checked="checkSystemService.current().janeName=='{{checkSystemService.getCheckSystems()[$index].janeName}}'" />
+                  <span ng-click="checkSystemService.current(c.janeName);">{{c.name}}<i>（{{c.goodInfos.buyerPrice}}元/篇）</i></span>
+                </div>
+              </div>
+              <div class="radio-wrap">
+                <div class="radio-inline" ng-repeat="c in checkSystemService.getCheckSystems().slice(3,5)">
+                  <input type="radio" name="versions" value="{{$index}}" ng-click="checkSystemService.current(c.janeName);"
+                         ng-checked="checkSystemService.current().janeName=='{{checkSystemService.getCheckSystems()[$index].janeName}}'" />
+                  <span ng-click="checkSystemService.current(c.janeName);">{{c.name}}<i>（{{c.goodInfos.buyerPrice}}元/篇）</i></span>
+                </div>
+              </div>
+              <h5 style="color: red; font-weight: bold;">维普系列</h5>
+              <div class="radio-wrap">
+                <div class="radio-inline" ng-repeat="c in checkSystemService.getCheckSystems().slice(5,8)">
+                  <input type="radio" name="versions" value="{{$index}}" ng-click="checkSystemService.current(c.janeName);"
+                         ng-checked="checkSystemService.current().janeName=='{{checkSystemService.getCheckSystems()[$index].janeName}}'" />
+                  <span ng-click="checkSystemService.current(c.janeName);">{{c.name}}<i>（{{c.goodInfos.buyerPrice}}元/{{c.goodInfos.buyerUnit}}字）</i></span>
+                </div>
+              </div>
+              <h5 style="color: red; font-weight: bold;">万方系列</h5>
+              <div class="radio-wrap">
+                <div class="radio-inline" ng-repeat="c in checkSystemService.getCheckSystems().slice(9,12)">
+                <input type="radio" name="versions" value="{{$index}}" ng-click="checkSystemService.current(c.janeName);"
+                       ng-checked="checkSystemService.current().janeName=='{{checkSystemService.getCheckSystems()[$index].janeName}}'" />
+                <span ng-click="checkSystemService.current(c.janeName);">{{c.name}}<i>（{{c.goodInfos.buyerPrice}}元/{{c.goodInfos.buyerUnit}}字）</i></span>
+              </div>
+              </div>
+              <div class="radio-wrap">
+                <div class="radio-inline" ng-repeat="c in checkSystemService.getCheckSystems().slice(8,9)">
+                  <input type="radio" name="versions" value="{{$index}}" ng-click="checkSystemService.current(c.janeName);"
+                         ng-checked="checkSystemService.current().janeName=='{{checkSystemService.getCheckSystems()[$index].janeName}}'" />
+                  <span ng-click="checkSystemService.current(c.janeName);">{{c.name}}<i>（{{c.goodInfos.buyerPrice}}元/{{c.goodInfos.buyerUnit}}字）</i></span>
+                </div>
+              </div>
+              <h5 style="color: red; font-weight: bold;">其他系列</h5>
+              <div class="radio-wrap">
+                <div class="radio-inline" ng-repeat="c in checkSystemService.getCheckSystems().slice(12,15)">
+                  <input type="radio" name="versions" value="{{$index}}" ng-click="checkSystemService.current(c.janeName);"
+                         ng-checked="checkSystemService.current().janeName=='{{checkSystemService.getCheckSystems()[$index].janeName}}'" />
+                  <span ng-click="checkSystemService.current(c.janeName);">{{c.name}}<i>（{{c.goodInfos.buyerPrice}}元/{{c.goodInfos.buyerUnit}}字）</i></span>
+                </div>
+              </div>
+              <div class="radio-wrap">
+                <div class="radio-inline" ng-repeat="c in checkSystemService.getCheckSystems().slice(15,17)">
+                  <input type="radio" name="versions" value="{{$index}}" ng-click="checkSystemService.current(c.janeName);"
+                         ng-checked="checkSystemService.current().janeName=='{{checkSystemService.getCheckSystems()[$index].janeName}}'" />
+                  <span ng-click="checkSystemService.current(c.janeName);">{{c.name}}<i>（{{c.goodInfos.buyerPrice}}元/{{c.goodInfos.buyerUnit}}字）</i></span>
+                </div>
+              </div>
+              <h5 style="color: red; font-weight: bold;">英文系列</h5>
+              <div class="radio-wrap">
+                <div class="radio-inline" ng-repeat="c in checkSystemService.getCheckSystems().slice(17,19)">
+                  <input type="radio" name="versions" value="{{$index}}" ng-click="checkSystemService.current(c.janeName);"
+                         ng-checked="checkSystemService.current().janeName=='{{checkSystemService.getCheckSystems()[$index].janeName}}'" />
+                  <span ng-click="checkSystemService.current(c.janeName);">Trunitin{{c.name}}<i>（{{c.goodInfos.buyerPrice}}元/{{c.goodInfos.buyerUnit}}字）</i></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" ng-if="checkSystemService.current().isHaveTitle=1">
+              <label class="Btitie" for="title">论文题目<span class="required" ng-if="checkSystemService.current().isRequredTitle=1">*</span></label>
+              <span class="err-info must">论文题目不能为空</span>
+              <input type="text" class="form-control" ng-model="paperService.getFirstPaper().title" minlength="{{checkSystemService.current().isRequredTitle}}"
+                maxlength="{{checkSystemService.current().titleMaxlength}}" id="title" name="title" placeholder="请输入您的论文题目，最长不超过{{checkSystemService.current().titleMaxlength}}字，此项将显示在报告中" />
+            </div>
+            <div class="form-group" ng-if="checkSystemService.current().isHaveAuthor=1">
+              <label class="Btitie" for="author">论文作者<span class="required" ng-if="checkSystemService.current().isRequredAuthor=1">*</span></label>
+              <span class="err-info must">论文作者不能为空</span>
+              <input type="text" class="form-control" ng-model="paperService.getFirstPaper().author" minlength="{{checkSystemService.current().isRequredAuthor}}"
+                maxlength="{{checkSystemService.current().authorMaxlength}}" id="author" name="author" placeholder="请输入作者名字，最长不超过{{checkSystemService.current().authorMaxlength}}字，此项将显示在报告中" />
+            </div>
+            <div class="form-group">
+                <label class="Btitie" for="author">提交方式<span class="required">*</span></label>
+                <div class="submit-tabs">
+                  <div class="tab" ng-class="{'active':checkSystemService.current().currentSubmitType.submitType=='file'}" ng-click="checkSystemService.current().currentSubmitType.change('file')" ng-if="!!checkSystemService.current().currentSubmitType.has('file')">
+                    <div class="upload-tab active">
+                      <label>上传文件</label>
+                    </div>
+                  </div>
+                  <div class="tab" ng-class="{'active':checkSystemService.current().currentSubmitType.submitType=='content'}" ng-click="checkSystemService.current().currentSubmitType.change('content')" ng-if="!!checkSystemService.current().currentSubmitType.has('content')">
+                    <div class="copy-tab">
+                      <label>粘贴文本</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="submit-tabs-content">
+                  <div class="submit-tab-content" ng-class="{'active':checkSystemService.current().currentSubmitType.submitType=='file'}">
+                    <div class="upload-file" ng-controller="checkCtlFile"> 
+                      <div class="upload-file-left hv-center-wrapper">
+                        <div class="s-upload-wrapper hv-center-content">
+                          <img src="images/upload-file.png" onclick="document.getElementById('file-upload').click()"/>
+                          <div class="s-op-wrapper">
+                            <div class="s-upload" ng-if="!paperService.getFirstPaper().isUploading&&!paperService.getFirstPaper().isUploaded" onclick="document.getElementById('file-upload').click()">点击上传</div>
+                            <div class="s-upload" ng-if="paperService.getFirstPaper().isUploaded">已上传</div>
+                            <div class="s-progress" ng-if="paperService.getFirstPaper().isUploading">{{paperService.getFirstPaper().$progress().percent}}%</div>
+                            <div class="s-progress-tip" ng-if="paperService.getFirstPaper().isUploading">正在上传,请耐心等待</div>
+                            <div ng-if="paperService.getFirstPaper().isUploaded&&paperService.getCountWitchFile()>0&&!paperService.getFirstPaper().hasError()" class="s-paper">
+                              <span class="s-paper-count">[{{paperService.getFirstPaper().getContentWords()}}]</span>
+                              <span>{{paperService.getFirstPaper().file_name}}</span>
+                              <span class="s-cancel" ng-click="paperService.getFirstPaper().$cancel()"></span>
+                            </div>
+                            <div>{{paperService.getFirstPaper().getError()}}</div>
+                            <input file-upload style="display:none" type="file" id="file-upload"/>
+                          </div>
+                        </div>
+                        <div class="s-line"></div>
+                      </div>
+                      <div class="upload-file-right  hv-center-wrapper">
+                        <div class="s-text hv-center-content">
+                            <div class="s-title">上传须知</div>
+                            <ul>
+                               <li><span>仅支持上传doc、docx、txt、pdf</span></li>
+                               <li><span>文档大小不超过30M</span></li>
+                               <li><span>论文命名格式：作者_标题 例：张三_论文标题</span></li>
+                            </ul>
+                          </div>
+                      </div>
+                    </div>
+                    <p class="counter-txt">
+                        计费方式:<i>{{payWayService.getBillingWay().u1Num}}{{payWayService.getBillingWay().u1Unit}}/{{payWayService.getBillingWay().u2Num}}{{payWayService.getBillingWay().u2Unit}}</i>
+                        &nbsp;&nbsp;&nbsp;<span class="counter">当前输入:<i>{{paperService.getFirstPaper().getContentWords()}}</i>字</span>
+                        &nbsp;&nbsp;&nbsp;<span class="pricer">应付金额:<i>{{payWayService.getBuyerPayInfo().u1Num}}</i>{{payWayService.getBuyerPayInfo().u1Unit}}</span>
+                      </p>
+                  </div>
+                  <div class="submit-tab-content" ng-class="{'active':checkSystemService.current().currentSubmitType.submitType=='content'}">
+                      <!-- <label class="Btitie" for="author">提交内容<span class="required">*</span></label> -->
+                      <!-- <a class="btn btn_addPic">
+                        <span>从本地选择文件</span>
+                        <input type="file" class="filePrew" title="WORD文件（.doc .docx）、文本文件（.txt）、PDF文件（.pdf），文件小于20M">
+                      </a> -->
+                      <!-- <a class="btn btn-clear" ng-click="paperService.removePaperAt(0);paperService.getFirstPaper();" href="javascript:document.paperForm.reset()">清空</a> -->
+        
+                      <span class="err-info must">提交内容不能为空</span>
+                      <span class="err-info length">内容字数{{checkSystemService.current().minWords}}字~{{checkSystemService.current().maxWords}}字</span>
+                      <textarea class="form-control" ng-model="paperService.getFirstPaper().content" minlength="{{checkSystemService.current().minWords}}"
+                        maxlength="{{checkSystemService.current().maxWords}}" name="content" id="text_content" placeholder="内容的长度至少{{checkSystemService.current().minWords}}字，至多{{checkSystemService.current().maxWords}}字。(超出此范围将无法检测)"></textarea>
+                      <p class="counter-txt">
+                        计费方式:<i>{{payWayService.getBillingWay().u1Num}}{{payWayService.getBillingWay().u1Unit}}/{{payWayService.getBillingWay().u2Num}}{{payWayService.getBillingWay().u2Unit}}</i>
+                        &nbsp;&nbsp;&nbsp;<span class="counter">当前输入:<i>{{paperService.getFirstPaper().getContentWords()}}</i>字</span>
+                        &nbsp;&nbsp;&nbsp;<span class="pricer">应付金额:<i>{{payWayService.getBuyerPayInfo().u1Num}}</i>{{payWayService.getBuyerPayInfo().u1Unit}}</span>
+                      </p>
+                  </div>
+                </div>
+            </div>
+            <button type="submit" onclick="return false;" ng-click="validatePaper()&&(step.index=2)&&uploadPaper()" class="btn btn-submit-pay">提&nbsp;&nbsp;交</button>
+          </form>
+        </div>
+        <div ng-if="step.index==2" class="order-main">
+          <div class="bg-white block order-info">
+            <span class="Bposition"><i>1</i>核对检测内容</span>
+            <div class="clearfix">
+              <dl class="width-tm">
+                <dt>论文标题</dt>
+                <dd class="ellipsis">{{paperService.getFirstPaper().title}}</dd>
+              </dl>
+              <dl class="width-zz">
+                <dt>论文作者</dt>
+                <dd class="ellipsis">{{paperService.getFirstPaper().author}}</dd>
+              </dl>
+              <dl class="width-zj">
+                <dt>内容总计</dt>
+                <dd><span>{{paperService.getFirstPaper().getContentWords()}}</span>字符</dd>
+              </dl>
+            </div>
+            <div class="price-txt yuan" style="display:block">
+              计费方式：<span>{{payWayService.getBillingWay().u1Num}}{{payWayService.getBillingWay().u1Unit}}/{{payWayService.getBillingWay().u2Num}}{{payWayService.getBillingWay().u2Unit}}</span>，不足{{payWayService.getBillingWay().u2Num}}{{payWayService.getBillingWay().u2Unit}}按{{payWayService.getBillingWay().u2Num}}{{payWayService.getBillingWay().u2Unit}}计算，应付金额：<i>{{payWayService.getBuyerPayInfo().u1Num}}</i>{{payWayService.getBuyerPayInfo().u1Unit}}</div>
+          </div>
+          <div class="bg-white block payway">
+            <div ng-if="submitPaperService.isUploading">
+              正在加载中...
+            </div>
+            <div ng-if="!submitPaperService.isUploading" ng-init="payWayService.current().already&&payOrder()" >
+              <span class="Bposition"><i>2</i>支付方式</span>
+              <ul class="item-group">
+                <li class="item-pane"ng-click="payWayService.current(pw.payType)&&payWayService.current().already&&payOrder()"
+                  ng-repeat="pw in payWayService.getPayWays()">
+                  <div class="item-heading clearfix">
+                    <div class="header-icon">
+                      <div class="icheckbox_sr" ng-class="{true:'checked'}[payWayService.userSelected&&payWayService.current().payType==pw.payType]">
+                        <input type="checkbox" class="icheckbox" name="payway-cb" value="{{pw.payType}}" />
+                      </div>
+                      <img ng-if="pw.payType=='taobao'" class="icon-pw" src="images/taobao.png" />
+                      <img ng-if="pw.payType=='wx'" class="icon-pw" src="images/weixin.png" />
+                      <img ng-if="pw.payType=='alipay'" class="icon-pw" src="images/zhifubao.png" />
+                      <img ng-if="pw.payType=='checktid'" class="icon-pw" src="images/custom.png" />
+                    </div>
+                    <div ng-if="pw.payType=='taobao'||pw.payType=='checktid'" class="header-info">
+                      <span ng-if="pw.payType=='checktid'" class="tit">自定义订单</span>
+                      <span ng-if="pw.payType=='taobao'" class="tit">淘宝</span>
+                      <a ng-if="pw.payType=='taobao'" class="a1">什么是订单编号？
+                        <div class="abs-show">
+                          <img src="images/findnumbers.png" />
+                        </div>
+                      </a>
+                      <ul class="ul-order clearfix" ng-if="payWayService.userSelected&&payWayService.current().payType==pw.payType">
+                        <li ng-if="!payWayService.current().isQuerying">订单总数：<i>{{payWayService.current().totalPay}}</i></li>
+                        <li ng-if="!payWayService.current().isQuerying">可用数量：<i>{{payWayService.current().restPay }}</i></li>
+                        <li ng-if="!payWayService.current().isQuerying">已用数量：<i>{{payWayService.current().usedPay }}</i></li>
+                        <li ng-if="payWayService.current().isQuerying ">正在查询...<i></i></li>
+                        <li style="color:red;font-weight: bold" ng-if="payWayService.current().hasError() ">{{payWayService.current().getError()}}<i></i></li>
+                      </ul>
+                      <a class="a2" ng-if="pw.payType=='taobao'" target="_blank" ng-href="{{checkSystemService.current().payWay.data.taobao.sellingUrl}}">去淘宝购买
+                        >></a>
+                    </div>
+                    <span ng-if="pw.payType=='wx'" class="tit">微信</span>
+                    <span ng-if="pw.payType=='alipay'" class="alipay">支付宝</span>
+                  </div>
+                  <div style="display:block" class="item-body" ng-if="payWayService.userSelected&&payWayService.current().payType==pw.payType">
+                    <form ng-if="pw.payType=='taobao'||pw.payType=='checktid'" class="form-horizontal form-order"
+                      method="post">
+                      <div ng-if="pw.payType=='taobao'" class="form-group tip-group">
+                        <label class="col-xs-2 control-label"></label>
+                        <div class="col-xs-6">
+                          <p class="form-control-static text-success">温馨提醒：在店铺中拍下对应数量宝贝，在下方输入淘宝订单编号进行检测.</p>
+                        </div>
+                      </div>
+                      <div class="form-group" ng-repeat="tidInfo in payWayService.current().tidsInfo">
+                        <label ng-if="$index==0" for="orderNum" class="col-xs-2 control-label">输入订单：</label>
+                        <label ng-if="$index>0" for="orderNum" class="col-xs-2 control-label">备用订单：</label>
+                        <div class="col-xs-6">
+                          <input type="text" ng-model='tidInfo.tid' ng-change="payWayService.current().reQueryTidDetail($index)"
+                            class="form-control" id="orderNum" name="orderNum" placeholder="请输入订单编号">
+                        </div>
+                        <span ng-if="$index==0" class="required">*</span>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-xs-2 control-label"></label>
+                        <div class="col-xs-6">
+                          <p class="form-control-static">备用订单正常情况下不需填写，如果订单编号金额不足，再填写此处，系统会合并金额</p>
+                        </div>
+                      </div>
+                    </form>
+                    <div ng-if="pw.payType=='wx'||pw.payType=='alipay'" class="sm-scan clearfix">
+                      <div class="pull-left">
+                        <div class="div-img">
+                          <!--二维码图片-->
+                          <img ng-if="!payWayService.current().qr_img_loading&&payWayService.current().has_qr_img"
+                            ng-src="{{payWayService.current().qr_img_url}}" class="erweima" src="#" style="width:200px;height:200px" />
+                          <em></em>
+
+                          <div ng-if="payWayService.current().qr_img_loading" class="abs-wrap loading" style="display:block">
+                            <div class="tranmb"></div>
+                            <div class="cont">
+                              <img src="images/loading.gif" />
+                              <p class="txt">二维码正在加载中，请稍等</p>
+                            </div>
+                          </div>
+                          <div ng-if="payWayService.current().qr_load_fail" class="abs-wrap error" style="display:block">
+                            <div class="tranmb"></div>
+                            <div class="cont">
+                              <img src="images/error.png" />
+                              <p class="txt">二维码加载失败，请<a href="javascript:;">刷新</a></p>
+                            </div>
+                          </div>
+                          <div ng-if="payWayService.current().is_expired" class="abs-wrap expired" style="display:block">
+                            <div class="tranmb"></div>
+                            <div class="cont">
+                              <img src="images/error.png" />
+                              <p class="txt">二维码已过期，请<a href="javascript:;" ng-click="payOrder()">刷新</a></p>
+                            </div>
+                          </div>
+                          <div ng-if="payWayService.current().is_success" class="abs-wrap success" style="display:block">
+                            <div class="tranmb"></div>
+                            <div class="cont">
+                              <img src="images/success.png" />
+                              <p class="txt">支付已完成，<span>5</span>秒后跳转<a href="report.html">报告列表</a><br />
+                                如未跳转请点击完成支付</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div ng-if="pw.payType=='wx'" class="scan-txt-wrap">
+                          <div class="clearfix">
+                            <img class="pull-left" src="images/icon-scan.png" />
+                            <div class="pull-right">
+                              <p>打开微信客户端</p>
+                              <p>扫一扫继续付款</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div ng-if="pw.payType=='alipay'" class="scan-txt-wrap">
+                          <div class="clearfix">
+                            <img class="pull-left" src="images/icon-scan.png" />
+                            <div class="pull-right">
+                              <p>打开支付宝客户端</p>
+                              <p>扫一扫继续付款</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- pull-left end -->
+                      <div class="pull-left scan-info">
+                        <ul>
+                          <li><b>应付金额：</b><i>{{payWayService.current().money}}</i>元</li>
+                          <li><b>订 单 号: </b>{{payWayService.current().oid}}</li>
+                          <li><span class="impl">温馨提示：请保存好订单号</span> 以便 <a href="report.html">查询报告</a></li>
+                        </ul>
+                        <div class="btn-wrap">
+                          <a class="btn btn-finish" target="_blank" ng-href="{{!!payWayService.current().oid?('report.html?tid='+payWayService.current().oid):'javascript:'}}">已支付，下一步</a>
+                          <a class="btn btn-error">支付遇到问题</a>
+                        </div>
+                      </div>
+                      <!-- scan-info end -->
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <button type="submit" onclick="return false;" ng-click="payOrder()" class="btn btn-submit-pay">立即检测</button>
+          <a class="btn btn-prev" ng-click="step.index=1">上一步</a>
+
+        </div>
+        <div class="vp-footer">
+        Copyright © <span class="copy-diff">{{systemCustomService.webInfo.webTit||""}}</span>
+
+</div>
+      </div>
+
+                  <!-- 右栏区域 -->
+            <div class="block-info">
+                <div class="bg-white block block-sale">
+                    <span class="Btitie">联系客服</span>
+                    <ul ng-if="siteService.sellerInfo">
+                        <li><b>客服QQ：</b><span><a target="_blank" href="{{'http://wpa.qq.com/msgrd?v=3&uin='+siteService.sellerInfo.qq+'&site=qq&menu=yes'}}">{{systemCustomService.webInfo.qq||"商家未设置"}}</a></span></li>
+                    </ul>
+                </div>
+
+                <div class="bg-white block block-tips">
+                    <span class="Btitie">温馨提示</span>
+                    <div class="dl-wrap">
+                        
+                        <dl class="clearfix" ng-repeat="t in systemCustomService.webInfo.tips1">
+                            <dt>{{t.key}}</dt>
+                            <dd ng-bind-html="t.val"></dd>
+                        </dl>
+                        
+                    </div>
+                </div>
+
+            </div>
+            <!-- block-info end -->
+    </div>
+    <!-- vp-content end -->
+  </div>
+  <script src="js/loading.js"></script>
+<script src="js/util.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    !function () {
+        var timeoutLoad = function () {
+            if (window.angular) {
+                angular.module('checkPaper').run(['$location','configService','checkSystemService','$rootScope', function ($location,configService,checkSystemService,$rootScope) { 
+                    var promise=configService.config({
+                        initUrl: "http://api.checkpass.net",
+                        userToken: "q8DxLfrgemtZ59x372919FPXT6c=",
+                        initJaneName: "cnkiamlc,cnkifenjie,cnkisamlc,cnkipmlc,cnkivip,cqvip,cqvipmd,cqvipzc,wanfanggl,wanfangbd,wanfangmd,wanfangpu,checkpass,paperpass,paperrater,zaojiance,zjchong,turnitin,turnitinuk,grammarly,",
+                        paySuccess:function (param) {
+                            var tid=param.oid;
+                            location.href = "report.html?tid=" + tid;
+                        }
+                    });
+                    promise.then(function(){
+                        var oSearch = $location.search();
+                        var urlSearch = {};
+                        if (location.search.substr(0, 1) == '?') {
+                            urlSearch = $location.search(location.search.substr(1)).search();
+                            $location.search(oSearch);
+                        }
+                        // console.log($location.search().jane_name);
+                        if(!!urlSearch.jane_name){
+                            checkSystemService.current(urlSearch.jane_name);
+                        }
+                    });
+                }]);
+                angular.module('checkPaper').run(['$rootScope', function ($rootScope) { 
+                    $rootScope.$on("checkRecordSuccess",function(event,checkRecord){
+                        //检测成功通知，如：可以播放音乐提示等等
+                        console.log(checkRecord);
+                    });
+                }]);
+                angular.bootstrap(document, ['checkPaper']);
+            } else {
+                setTimeout(timeoutLoad, 50);
+            }
+        };
+        timeoutLoad();
+    }();
+</script>
+</body>
+
+</html>
